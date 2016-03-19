@@ -1,0 +1,62 @@
+group 'org.test.gradle'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+
+import org.joda.time.DateTime
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'joda-time:joda-time:2.9.2'
+    }
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task hello {
+    println 'configuration section'
+
+    doFirst {
+        println "Hello ${ new org.joda.time.DateTime() } $person"
+    }
+
+    doLast {
+        println "Bye ${ new org.joda.time.DateTime() } $person"
+    }
+}
+
+task monday {
+
+    onlyIf {
+        new Date().getDay() == 4
+    }
+
+    doLast {
+        println 'only on mondays'
+    }
+}
+
+task mail(type: MailTask) {
+    to = "vasya@mail.com"
+    content = "time to wake up"
+}
+
+task X <<{ println 'running X' }
+task C(dependsOn: X) <<{ println 'running C' }
+task B() <<{ println 'running B' }
+task A(dependsOn: [B, C]) <<{ println 'running A' }
+
